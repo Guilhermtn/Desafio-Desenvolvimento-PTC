@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../database";
+import { findByTamanho, findByMarca, countTotalPares } from "../repositorie/CalcadoRepositorie";
 
 
 // CREATE - Cadastrar um novo calçado
@@ -71,5 +72,40 @@ export const deleteCalcado = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Calçado removido com sucesso" });
   } catch (error) {
     return res.status(400).json({ error: "Erro ao remover calçado" });
+  }
+};
+
+// Busca calçados por tamanho
+export const getByTamanho = async (req: Request, res: Response) => {
+  try {
+    const { tamanho } = req.params;
+    const calcados = await findByTamanho(Number(tamanho));
+
+    return res.status(200).json(calcados);
+  } catch (error) {
+    return res.status(400).json({ error: "Erro ao buscar por tamanho" });
+  }
+};
+
+// Filtra calçados por marca
+export const getByMarca = async (req: Request, res: Response) => {
+  try {
+    const { marca } = req.params;
+    const calcados = await findByMarca(marca);
+
+    return res.status(200).json(calcados);
+  } catch (error) {
+    return res.status(400).json({ error: "Erro ao filtrar por marca" });
+  }
+};
+
+// Contagem total de pares no estoque
+export const getTotalPares = async (req: Request, res: Response) => {
+  try {
+    const total = await countTotalPares();
+
+    return res.status(200).json({ total_pares: total });
+  } catch (error) {
+    return res.status(500).json({ error: "Erro ao contar pares" });
   }
 };
